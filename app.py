@@ -2,6 +2,11 @@ import streamlit as st
 import numpy as np
 from sklearn import datasets
 
+#models
+from sklearn.svm import SVC
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
+
 
 
 st.write('''
@@ -45,3 +50,17 @@ def add_parameters_ui(classifier):
     return params
 
 params = add_parameters_ui(classifier)
+
+#function de set classifier
+def get_classifier(classifier, params):
+    if classifier == "KNN":
+        clf = KNeighborsClassifier(n_neighbors=params["K"])
+    elif classifier == "SVM":
+        clf = SVC(C=params["C"])
+    else:
+        clf = RandomForestClassifier(n_estimators=params["estimators"], max_depth=params["max_depth"])
+    return clf
+
+clf = get_classifier(classifier, params)
+st.write("Chosen Classifier : ",clf)
+        
