@@ -6,14 +6,17 @@ from sklearn import datasets
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
 
 
 
 st.write('''
          Compare differnet **Classifiers** on different **Datasets**
          ''')
-
-dataChoice = st.sidebar.selectbox("Select a Dataset",("Iris Dataset","Breast Cancer","Wine Dataset"))
+st.sidebar.write("""**The Dataset**""")
+dataChoice = st.sidebar.selectbox(label="Select a Dataset",options=("Iris Dataset","Breast Cancer","Wine Dataset"))
+st.sidebar.write("""**The Classifier**""")
 classifier = st.sidebar.selectbox("Select a Classifier",("KNN","SVM","Random Forest"))
 
 #function to load the chosen dataset
@@ -62,5 +65,27 @@ def get_classifier(classifier, params):
     return clf
 
 clf = get_classifier(classifier, params)
-st.write("Chosen Classifier : ",clf)
+
+#Classification
+st.sidebar.write("**The Classification**")
+help_strat = "Stratification helps getting the same proportion of targets in train and test sets"
+
+test_size = st.sidebar.slider("Test set size",0.1,0.5)
+strat = st.sidebar.checkbox(label="Stratification",help=help_strat)
+
+if strat:
+    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=test_size,stratify=y)
+else:
+    X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=test_size)
+
+#Training the model
+clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+
+#compute the accuracy
+acc = accuracy_score(y_test,y_pred)
+
+st.write("Chosen Classifier : {} with the Accuracy of {:.3f}".format(classifier,acc))
+    
+
         
